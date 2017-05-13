@@ -1,0 +1,36 @@
+mongoimport --jsonArray --db comp5347 --collection articles --drop --file revisions/*.json
+find revisions -regex '.*/[^/]*.json' -print0 | xargs -L 1 -0  mongoimport --jsonArray --db comp5347  --collection revisions  --file
+
+
+db.getCollection('revisions').aggregate(
+  [
+    {
+        $group:{
+            _id:{title:"$title"},
+            count:{$sum:1}
+        }
+    },
+    {
+        $group: {
+            _id : null,
+            count : {$sum : 1}
+        }
+    }
+  ]
+)
+
+db.getCollection('revisions').aggregate(
+  [
+    {
+        $group:{
+            _id:{title:"$title"},
+            count:{$sum:1}
+        }
+    },
+    {
+        $sort: {
+            count : 1
+        }
+    }
+  ]
+)
