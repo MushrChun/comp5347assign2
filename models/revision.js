@@ -13,13 +13,6 @@ var RevisionSchema = new mongoose.Schema(
     }
 );
 
-RevisionSchema.statics.findTitleLatestRev = function (title, callback) {
-
-    return this.find({'title': title})
-        .sort({'timestamp': -1})
-        .limit(1)
-        .exec(callback)
-};
 
 RevisionSchema.statics.findMostRevisedArticle = function (callback) {
 
@@ -61,7 +54,8 @@ RevisionSchema.statics.findMostPopularArticle = function (callback) {
         {'$match': {type:'user'}},
         {'$group': {'_id':{title:'$title',user:'$user'}}},
         {'$group': {'_id':{title:'$_id.title'}, 'count':{$sum:1}}},
-        {'$sort': {'count':-1}}
+        {'$sort': {'count':-1}},
+        {'$limit':1}
     ]
 
     this.aggregate(findMostPopularArticlePipeline, function(err, results){
@@ -79,7 +73,8 @@ RevisionSchema.statics.findLeastPopularArticle = function (callback) {
         {'$match': {type:'user'}},
         {'$group': {'_id':{title:'$title',user:'$user'}}},
         {'$group': {'_id':{title:'$_id.title'}, 'count':{$sum:1}}},
-        {'$sort': {'count':1}}
+        {'$sort': {'count':1}},
+        {'$limit':1}
     ]
 
     this.aggregate(findLeastPopularArticlePipeline, function(err, results){
@@ -112,7 +107,8 @@ RevisionSchema.statics.findLongestHistoryArticle = function (callback) {
         },
         {
             '$sort': {'age': -1}
-        }
+        },
+        {'$limit':1}
     ]
 
     this.aggregate(findLongestHistoryArticlePipeline, function(err, results){
@@ -145,7 +141,8 @@ RevisionSchema.statics.findLeastHistoryArticle = function (callback) {
         },
         {
             '$sort': {'age': 1}
-        }
+        },
+        {'$limit':1}
     ]
 
     this.aggregate(findLeastHistoryArticlePipeline, function(err, results){

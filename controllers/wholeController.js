@@ -3,12 +3,51 @@
  */
 Revision = require('../models/revision');
 
-module.exports.fun1 = function fun1(req, res){
-    Revision.distinct('user', {'anon':{'$exists':false},'title':'CNN'}, function(err,users){
-        if (err){
-            console.log("Query error!")
-        }else{
-            console.log("There are " + users.length + " distinct users in CNN");
-        }
+module.exports.findMostRevisedArticle = function findMostRevisedArticle(req, res){
+    Revision.findMostRevisedArticle(function(result){
+        res.json(result)
     })
 };
+
+module.exports.findLeastRevisedArticle = function findLeastRevisedArticle(req, res){
+    Revision.findLeastRevisedArticle(function(result){
+        res.json(result)
+    })
+};
+
+module.exports.findMostPopularArticle = function findMostPopularArticle(req, res){
+    Revision.findMostPopularArticle(function(result){
+        res.json(result)
+    })
+};
+
+module.exports.findLeastPopularArticle = function findLeastPopularArticle(req, res){
+    Revision.findLeastPopularArticle(function(result){
+        res.json(result)
+    })
+};
+
+module.exports.findLongestHistoryArticle = function findLongestHistoryArticle(req, res){
+    Revision.findLongestHistoryArticle(function(result){
+        res.json(result)
+    })
+};
+
+module.exports.findLeastHistoryArticle = function findLeastHistoryArticle(req, res){
+    Revision.findLeastHistoryArticle(function(result){
+        res.json(result)
+    })
+};
+
+module.exports.statRevByYearByType = function statRevByYearByType(req, res){
+    Revision.statRevByYearByType(function(result){
+        res.json(result)
+    })
+};
+
+module.exports.statRevByType = function statRevByType(req, res){
+    Revision.statRevByType(function(result){
+        res.json(result)
+    })
+};
+
