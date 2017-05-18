@@ -1,7 +1,7 @@
 /**
  * Created by MushrChun on 12/5/17.
  */
-var Revision = require('../models/revision')
+// var Revision = require('../models/revision')
 
 // Revision.findMostRevisedArticle(function(result){
 //     console.log(result)
@@ -57,4 +57,24 @@ var Revision = require('../models/revision')
 // // console.log(date.getTime())
 // console.log(date2-date1)
 
-// console.log(1)
+// // console.log(1)
+// var tool = require('../tools/tools')
+// // console.log(tool.checkAdmin('Miniapolis1'))
+// console.log('in test')
+
+// var async = require('async')
+// count = 0
+// async.whilst(
+//     function(){
+//         return count < 5;
+//     },
+//     function(callback){
+//         count ++;
+//         callback(null, 1);
+//     },
+//     function(err, n){
+//         console.log(n)
+//     }
+// )
+
+// var controller = require('../controllers/singleController')

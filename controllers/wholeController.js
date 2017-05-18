@@ -5,25 +5,37 @@ Revision = require('../models/revision');
 
 module.exports.findMostRevisedArticle = function findMostRevisedArticle(req, res){
     Revision.findMostRevisedArticle(function(result){
-        res.json(result)
+        res.json({
+            title: result[0]._id,
+            count: result[0].numOfRevisions
+        })
     })
 };
 
 module.exports.findLeastRevisedArticle = function findLeastRevisedArticle(req, res){
     Revision.findLeastRevisedArticle(function(result){
-        res.json(result)
+        res.json({
+            title: result[0]._id,
+            count: result[0].numOfRevisions
+        })
     })
 };
 
 module.exports.findMostPopularArticle = function findMostPopularArticle(req, res){
     Revision.findMostPopularArticle(function(result){
-        res.json(result)
+        res.json({
+            title: result[0]._id.title,
+            count: result[0].count
+        })
     })
 };
 
 module.exports.findLeastPopularArticle = function findLeastPopularArticle(req, res){
     Revision.findLeastPopularArticle(function(result){
-        res.json(result)
+        res.json({
+            title: result[0]._id.title,
+            count: result[0].count
+        })
     })
 };
 

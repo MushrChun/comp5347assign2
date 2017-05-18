@@ -3,7 +3,7 @@ var mongoose = require('./db');
 var RevisionSchema = new mongoose.Schema(
     {
         title: String,
-        timestamp: String,
+        timestamp: Date,
         user: String,
         anon: String,
         type: String
@@ -13,6 +13,13 @@ var RevisionSchema = new mongoose.Schema(
     }
 );
 
+RevisionSchema.statics.findTitleLatestRev = function(title, callback){
+
+    return this.find({'title':title})
+        .sort({'timestamp':-1})
+        .limit(1)
+        .exec(callback)
+}
 
 RevisionSchema.statics.findMostRevisedArticle = function (callback) {
 
