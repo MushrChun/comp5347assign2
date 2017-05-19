@@ -41,13 +41,13 @@ module.exports.findLeastPopularArticle = function findLeastPopularArticle(req, r
 
 module.exports.findLongestHistoryArticle = function findLongestHistoryArticle(req, res){
     Revision.findLongestHistoryArticle(function(result){
-        res.json(result)
+        res.json(result[0])
     })
 };
 
 module.exports.findLeastHistoryArticle = function findLeastHistoryArticle(req, res){
     Revision.findLeastHistoryArticle(function(result){
-        res.json(result)
+        res.json(result[0])
     })
 };
 
@@ -63,3 +63,9 @@ module.exports.statRevByType = function statRevByType(req, res){
     })
 };
 
+
+module.exports.findAllArticles = function statRevByType(req, res){
+    Revision.findAllArticles(function(result){
+        res.json(result)
+    })
+};

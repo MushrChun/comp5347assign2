@@ -13,6 +13,33 @@ var RevisionSchema = new mongoose.Schema(
     }
 );
 
+RevisionSchema.statics.findAllArticles= function(callback){
+
+    var findAllArticlesPipeline = [
+        {
+            '$group':
+                {
+                    '_id': {title: '$title'}
+                }
+        },
+        {
+            '$project': {'title':'$_id.title',  '_id':0}
+        },
+        {
+            '$sort': {'title': 1}
+        }
+
+    ]
+
+    this.aggregate(findAllArticlesPipeline, function(err, results){
+        if (err){
+            console.log("Aggregation Error")
+        }else{
+            callback(results)
+        }
+    });
+}
+
 RevisionSchema.statics.findTitleLatestRev = function(title, callback){
 
     return this.find({'title':title})
@@ -337,6 +364,36 @@ RevisionSchema.statics.statRevByYearByUserOfArticle = function (user, article, c
         },
         {
             '$sort': { year:1}
+        }
+
+    ]
+
+    this.aggregate(statRevByYearByTypePipeline, function(err, results){
+        if (err){
+            console.log("Aggregation Error")
+        }else{
+            callback(results)
+        }
+    });
+}
+
+RevisionSchema.statics.findUsersOfArticle = function (article, callback) {
+
+    var statRevByYearByTypePipeline = [
+        {
+            '$match': {'title': article, 'type':'user'}
+        },
+        {
+            '$group':
+                {
+                    '_id': {user: '$user'}
+                }
+        },
+        {
+            '$project': {'user':'$_id.user', '_id': 0}
+        },
+        {
+            '$sort': { user:1}
         }
 
     ]

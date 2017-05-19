@@ -78,3 +78,11 @@
 // )
 
 // var controller = require('../controllers/singleController')
+
+// Revision.findAllArticles(function(result){
+//     console.log(result)
+// })
+
+// Revision.findUsersOfArticle('Adrian Cole (RAAF officer)', function(result){
+//     console.log(result);
+// })

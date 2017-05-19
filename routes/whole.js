@@ -10,5 +10,6 @@ router.get('/findLongestHistoryArticle', controller.findLongestHistoryArticle);
 router.get('/findLeastHistoryArticle', controller.findLeastHistoryArticle);
 router.get('/statRevByYearByType', controller.statRevByYearByType);
 router.get('/statRevByType', controller.statRevByType);
+router.get('/findAllArticles', controller.findAllArticles);
 
 module.exports = router;

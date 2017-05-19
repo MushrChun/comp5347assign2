@@ -5,7 +5,7 @@ Revision = require('../models/revision');
 https = require('https');
 async = require('async');
 
-var batchComplete = false;
+var batchComplete;
 var rvcontinue;
 var rvCount;
 
@@ -20,7 +20,11 @@ function checkAndUpdate(title, callback){
         var now = new Date()
         var diffDay = parseInt((now - lastDate)/(24*3600*1000))
         if(diffDay>=1){
+            console.log('to update');
             rvCount = 0;
+            batchComplete = false;
+            rvcontinue = undefined;
+            lastDate.setSeconds(lastDate.getSeconds()+1); //skip last revision
             async.whilst(
                 function() {
                     return !batchComplete;
@@ -45,6 +49,7 @@ function tryToImportNewRevisons(title, startDate, cb){
         pathStr += '&rvcontinue=' + rvcontinue;
     }
 
+    console.log(pathStr);
     https.get(pathStr, function(res) {
         var status = res.statusCode;
         var rawData = '';
@@ -63,7 +68,9 @@ function tryToImportNewRevisons(title, startDate, cb){
                 var pages = parsedData.query.pages;
                 var revisions = pages[Object.keys(pages)].revisions;
                 var checkTool = require('../tools/tools');
-                console.log(revisions)
+                if(revisions == undefined){
+                    return cb(null, 0);
+                }
                 revisions.forEach(function(revision){
                     if(checkTool.hasAnon(revision)){
                         revision.type ='anonymous';
@@ -82,150 +89,66 @@ function tryToImportNewRevisons(title, startDate, cb){
                 cb(null, revisions.length);
             } catch (e) {
                 console.error(e.message);
-                return 0;
             }
         });
 
     });
 }
 
-// checkAndUpdate('Australia',  function(result){
-//     console.log(result)
-// })
+
+module.exports.updateArticle = function updateArticle(req, res){
+
+    checkAndUpdate(req.params.article, function(result){
+        res.json({
+            updated: result,
+            title: req.params.article
+        });
+    })
+
+};
 
 module.exports.statTotalRevisionOfArticle = function statTotalRevisionOfArticle(req, res){
 
-    async.series([
-        function(callback) {
-            checkAndUpdate(req.params.article, function(result){
-                callback(null, result);
-            })
-        },
-        function(callback){
-            Revision.statTotalRevisionOfArticle(req.params.article, function(result){
-                callback(null, result);
-            })
-        }
-    ],
-        function(err, results){
-            if(err){
-                return console.log(err);
-            }
-            res.json({
-                updateCount: results[0],
-                result: results[1]
-            });
-
-        }
-    );
+    Revision.statTotalRevisionOfArticle(req.params.article, function(result){
+        res.json({
+            count: result
+        });
+    })
 
 };
 
 module.exports.findTop5RegUsersRevisedArticle = function findTop5RegUsersRevisedArticle(req, res){
 
-    async.series([
-            function(callback) {
-                checkAndUpdate(req.params.article, function(result){
-                    callback(null, result);
-                })
-            },
-            function(callback){
-                Revision.findTop5RegUsersRevisedArticle(req.params.article, function(result){
-                    callback(null, result);
-                })
-            }
-        ],
-        function(err, results){
-            if(err){
-                return console.log(err);
-            }
-            res.json({
-                updateCount: results[0],
-                result: results[1]
-            });
-
-        }
-    );
+    Revision.findTop5RegUsersRevisedArticle(req.params.article, function(result){
+        res.json(result);
+    })
 };
 
 module.exports.statRevByYearByTypeOfArticle = function statRevByYearByTypeOfArticle(req, res){
 
-    async.series([
-            function(callback) {
-                checkAndUpdate(req.params.article, function(result){
-                    callback(null, result);
-                })
-            },
-            function(callback){
-                Revision.statRevByYearByTypeOfArticle(req.params.article, function(result){
-                    callback(null, result);
-                })
-            }
-        ],
-        function(err, results){
-            if(err){
-                return console.log(err);
-            }
-            res.json({
-                updateCount: results[0],
-                result: results[1]
-            });
-
-        }
-    );
+    Revision.statRevByYearByTypeOfArticle(req.params.article, function(result){
+        res.json(result);
+    })
 };
 
 module.exports.statRevByTypeOfArticle = function statRevByTypeOfArticle(req, res){
 
-    async.series([
-            function(callback) {
-                checkAndUpdate(req.params.article, function(result){
-                    callback(null, result);
-                })
-            },
-            function(callback){
-                Revision.statRevByTypeOfArticle(req.params.article, function(result){
-                    callback(null, result);
-                })
-            }
-        ],
-        function(err, results){
-            if(err){
-                return console.log(err);
-            }
-            res.json({
-                updateCount: results[0],
-                result: results[1]
-            });
-
-        }
-    );
+    Revision.statRevByTypeOfArticle(req.params.article, function(result){
+        res.json(result);
+    })
 };
 
 module.exports.statRevByYearByUserOfArticle = function statRevByYearByUserOfArticle(req, res){
 
-    async.series([
-            function(callback) {
-                checkAndUpdate(req.params.article, function(result){
-                    callback(null, result);
-                })
-            },
-            function(callback){
-                Revision.statRevByYearByUserOfArticle(req.params.article, function(result){
-                    callback(null, result);
-                })
-            }
-        ],
-        function(err, results){
-            if(err){
-                return console.log(err);
-            }
-            res.json({
-                updateCount: results[0],
-                result: results[1]
-            });
+    Revision.statRevByYearByUserOfArticle(req.params.user, req.params.article, function(result){
+        res.json(result);
+    })
+};
 
-        }
-    );
+module.exports.findUsersOfArticle = function findUsersOfArticle(req, res){
+
+    Revision.findUsersOfArticle(req.params.article, function(result){
+        res.json(result);
+    })
 };
 
