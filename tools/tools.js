@@ -16,7 +16,6 @@ botFile.split("\n").forEach((item)=>{
 });
 
 module.exports.hasAnon = function hasAnon(item){
-    // console.log('anon'+item['anon'])
     if(item['anon']==undefined)
         return false;
     else{
@@ -26,14 +25,11 @@ module.exports.hasAnon = function hasAnon(item){
 
 module.exports.checkBot = function checkBot(item){
     var count = 0;
-    // console.log('in check admin'+item)
     bot.forEach((bot_item) => {
         if(bot_item == item){
             count ++;
         }
-        // console.log(bot_item)
     });
-    // console.log(count);
     if(count > 0){
         return true;
     }else{
@@ -43,14 +39,11 @@ module.exports.checkBot = function checkBot(item){
 
 module.exports.checkAdmin = function checkAdmin(item){
     var count = 0;
-    // console.log('in check admin'+item)
     admin.forEach((admin_item) => {
         if(admin_item == item){
             count ++;
         }
-        // console.log(admin_item)
     });
-    // console.log(count);
     if(count > 0){
         return true;
     }else{

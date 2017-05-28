@@ -379,7 +379,7 @@ RevisionSchema.statics.statRevByYearByUserOfArticle = function (user, article, c
 
 RevisionSchema.statics.findUsersOfArticle = function (article, callback) {
 
-    var statRevByYearByTypePipeline = [
+    var findUsersOfArticlePipeline = [
         {
             '$match': {'title': article, 'type':'user'}
         },
@@ -398,7 +398,7 @@ RevisionSchema.statics.findUsersOfArticle = function (article, callback) {
 
     ]
 
-    this.aggregate(statRevByYearByTypePipeline, function(err, results){
+    this.aggregate(findUsersOfArticlePipeline, function(err, results){
         if (err){
             console.log("Aggregation Error")
         }else{
