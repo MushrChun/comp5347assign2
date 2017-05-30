@@ -255,6 +255,9 @@ function getTop5UserStat(topUser, title) {
                 dataSet.push(obj);
             });
 
+            var yearSet = dataX.yearList;
+            var sortedSet = yearSet.sort();
+
             var t5b = document.getElementById("top5Bar");
             if(top5Bar){
                 top5Bar.destroy();
