@@ -152,3 +152,104 @@ module.exports.findUsersOfArticle = function findUsersOfArticle(req, res){
     })
 };
 
+module.exports.statTop5RegUsersRevisedArticle = function statTop5RegUsersRevisedArticle(req, res){
+
+    async.waterfall([
+        function(callback){
+            Revision.findTop5RegUsersRevisedArticle(req.params.article, function(result){
+                callback(null, result);
+            })
+        },
+        function(result, callback){
+            var list = new Array();
+            var count = 0;
+
+            async.whilst(
+                function(){
+                    if(count<result.length){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                },
+                function(cb){
+                    Revision.statRevByYearByUserOfArticle(result[count].user, req.params.article, function(data){
+
+                        var userName = result[count].user;
+                        data.forEach(function(entry){
+
+                            list.push({
+                                name: userName,
+                                year: entry.year,
+                                count: entry.count
+                            })
+                        });
+                        cb(null, ++count);
+                    })
+                },
+                function(err, n){
+                    if(err){
+                        console.log(err);
+                    }
+                    callback(null, list);
+                }
+            );
+        },
+        function(list){
+            var yearSet = new Set();
+            var nameSet = new Set();
+            for(var i in list){
+                yearSet.add(list[i].year);
+                nameSet.add(list[i].name);
+            }
+            var yearList = Array.from(yearSet);
+            for(var i in yearList){
+                var currentYear = yearList[i];
+                var loopNameSet = new Set();
+                for(var j in list){
+                    if(list[j].year == currentYear){
+                        loopNameSet.add(list[j].name);
+                    }
+                }
+                nameSet.forEach(function(entry){
+                    if(!loopNameSet.has(entry)){
+                        list.push({
+                            name: entry,
+                            year: currentYear,
+                            count: 0
+                        })
+                    }
+                });
+            }
+            var sorted = list.sort(function(a,b){
+                return a.year - b.year;
+            });
+
+            console.log(sorted)
+            console.log(nameSet)
+            var dataSet = [];
+            var nameList = Array.from(nameSet)
+            for(var n in nameList){
+                console.log(nameList[n]);
+                var obj = [];
+                for(var s in sorted){
+                    console.log(sorted[s])
+                    if(nameList[n] == sorted[s].name){
+                        obj.push(sorted[s].count);
+                    }
+                }
+                dataSet.push({
+                    name: nameList[n],
+                    data: obj
+                })
+            }
+
+            res.json({
+                yearList: yearList,
+                dataSet: dataSet
+            });
+
+        }
+    ]);
+
+};

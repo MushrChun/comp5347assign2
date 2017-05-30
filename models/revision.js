@@ -122,12 +122,34 @@ RevisionSchema.statics.findLeastPopularArticle = function (callback) {
 
 RevisionSchema.statics.findLongestHistoryArticle = function (callback) {
 
+    // var findLongestHistoryArticlePipeline = [
+    //     {
+    //         '$group':
+    //             {
+    //                 '_id':{title:'$title'},
+    //                 maxTime:{$max:'$timestamp'},
+    //                 minTime:{$min:'$timestamp'}
+    //             }
+    //     },
+    //     {
+    //         '$project':
+    //             {
+    //                 '_id': 0,
+    //                 'title':'$_id.title',
+    //                 'age': {$subtract:['$maxTime', '$minTime']}
+    //             }
+    //     },
+    //     {
+    //         '$sort': {'age': -1}
+    //     },
+    //     {'$limit':1}
+    // ];
+
     var findLongestHistoryArticlePipeline = [
         {
             '$group':
                 {
                     '_id':{title:'$title'},
-                    maxTime:{$max:'$timestamp'},
                     minTime:{$min:'$timestamp'}
                 }
         },
@@ -136,11 +158,11 @@ RevisionSchema.statics.findLongestHistoryArticle = function (callback) {
                 {
                     '_id': 0,
                     'title':'$_id.title',
-                    'age': {$subtract:['$maxTime', '$minTime']}
+                    'minTime': 1
                 }
         },
         {
-            '$sort': {'age': -1}
+            '$sort': {'minTime': 1}
         },
         {'$limit':1}
     ]
@@ -156,12 +178,34 @@ RevisionSchema.statics.findLongestHistoryArticle = function (callback) {
 
 RevisionSchema.statics.findLeastHistoryArticle = function (callback) {
 
+    // var findLeastHistoryArticlePipeline = [
+    //     {
+    //         '$group':
+    //             {
+    //                 '_id':{title:'$title'},
+    //                 maxTime:{$max:'$timestamp'},
+    //                 minTime:{$min:'$timestamp'}
+    //             }
+    //     },
+    //     {
+    //         '$project':
+    //             {
+    //                 '_id': 0,
+    //                 'title':'$_id.title',
+    //                 'age': {$subtract:['$maxTime', '$minTime']}
+    //             }
+    //     },
+    //     {
+    //         '$sort': {'age': 1}
+    //     },
+    //     {'$limit':1}
+    // ];
+
     var findLeastHistoryArticlePipeline = [
         {
             '$group':
                 {
                     '_id':{title:'$title'},
-                    maxTime:{$max:'$timestamp'},
                     minTime:{$min:'$timestamp'}
                 }
         },
@@ -170,11 +214,11 @@ RevisionSchema.statics.findLeastHistoryArticle = function (callback) {
                 {
                     '_id': 0,
                     'title':'$_id.title',
-                    'age': {$subtract:['$maxTime', '$minTime']}
+                    'minTime': 1
                 }
         },
         {
-            '$sort': {'age': 1}
+            '$sort': {'minTime': -1}
         },
         {'$limit':1}
     ]

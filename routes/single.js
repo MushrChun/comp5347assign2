@@ -9,5 +9,6 @@ router.get('/statRevByYearByTypeOfArticle/:article', controller.statRevByYearByT
 router.get('/statRevByTypeOfArticle/:article', controller.statRevByTypeOfArticle);
 router.get('/findUsersOfArticle/:article', controller.findUsersOfArticle);
 router.get('/statRevByYearByUserOfArticle/:user/:article', controller.statRevByYearByUserOfArticle);
+router.get('/statTop5RegUsersRevisedArticle/:article', controller.statTop5RegUsersRevisedArticle);
 
 module.exports = router;

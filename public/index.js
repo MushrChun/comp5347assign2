@@ -1,4 +1,6 @@
 var top5Bar;
+var singleBarChart;
+var singlePieChart;
 
 $.get('whole/findAllArticles', function (data, status) {
     var $parent = $('#articleSelector');
@@ -23,7 +25,13 @@ function getArticleList(title) {
 
         $.get('single/findTop5RegUsersRevisedArticle/' + deTitle, function (data,status) {
             $('#topUserSelector').empty();
+            if(top5Bar){
+                top5Bar.destroy();
+            }
+
+
             $('#topFiveRegularUser').html('<span class="text-info">Top 5 user and revision number => </span><br>');
+            $('#topUserSelector').append($('<li onclick=getTop5UserStat("all","' + title +'")><a> All </a></li>'));
             for (var i=0; i<data.length; i++) {
                 var topUser = data[i].user;
                 $('#topFiveRegularUser').append(topUser + ' : ' + data[i].count + '</br> ');
@@ -85,9 +93,12 @@ function getArticleList(title) {
                 }
             }
 
+            if(singleBarChart){
+                singleBarChart.destroy();
+            }
 
             var sbc = document.getElementById("singleBarChart");
-            var singleBarChart = new Chart(sbc, {
+            singleBarChart = new Chart(sbc, {
                 type: 'bar',
                 data: {
                     labels: yearList.map(String),
@@ -155,9 +166,11 @@ function getArticleList(title) {
                 }
             }
 
-
+            if(singlePieChart){
+                singlePieChart.destroy();
+            }
             var spc = document.getElementById("singlePieChart");
-            var singlePieChart = new Chart(spc, {
+            singlePieChart = new Chart(spc, {
                 type: 'pie',
                 data:
                     {
@@ -199,50 +212,113 @@ function getArticleList(title) {
 
 }
 
+function randomBackgroundColorGenerator(i) {
+    var backgroundColor = [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+    ];
+    return backgroundColor[i];
+};
+
+function randomBorderColorColorGenerator(i) {
+    var  borderColor = [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+    ];
+    return borderColor[i];
+};
+
+
 
 function getTop5UserStat(topUser, title) {
     var deTitle = decodeURI(title);
     var deTopUser = decodeURI(topUser);
-    $.get('single/statRevByYearByUserOfArticle/' + deTopUser + '/' + deTitle, function (dataX, status) {
+    if(topUser=='all'){
+        $.get('single/statTop5RegUsersRevisedArticle/' + deTitle, function (dataX, status){
 
-        var singleYearList = new Array();
-        var userYearlyRevision = new Array();
+            var dataSet = [];
+            dataX.dataSet.forEach(function(entry, index){
+                var obj = {};
+                obj.label = entry.name;
+                obj.data = entry.data;
+                obj.backgroundColor = randomBackgroundColorGenerator(index);
+                obj.borderColor = randomBorderColorColorGenerator(index);
+                obj.borderWidth = 1;
+                dataSet.push(obj);
+            });
 
-        for (var i in dataX) {
-            singleYearList.push(dataX[i].year);
-            userYearlyRevision.push(dataX[i].count);
-        }
-
-        var t5b = document.getElementById("top5Bar");
-        if(top5Bar){
-            top5Bar.destroy();
-        }
-        top5Bar = new Chart(t5b, {
-            type: 'bar',
-            data: {
-                labels: singleYearList.map(String),
-                datasets: [
-                    {
-                        label: deTopUser,
-                        backgroundColor : "rgba(255, 159, 64, 0.2)",
-                        borderColor : "rgba(255, 159, 64, 1)",
-                        data : userYearlyRevision,
-                        borderWidth: 1
-                    },
-
-                ]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
-                    }]
-                }
+            var t5b = document.getElementById("top5Bar");
+            if(top5Bar){
+                top5Bar.destroy();
             }
+            top5Bar = new Chart(t5b, {
+                type: 'bar',
+                data: {
+                    labels: dataX.yearList.map(String),
+                    datasets: dataSet
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            })
         })
-    })
+    }else{
+        $.get('single/statRevByYearByUserOfArticle/' + deTopUser + '/' + deTitle, function (dataX, status) {
+
+            var singleYearList = new Array();
+            var userYearlyRevision = new Array();
+
+            for (var i in dataX) {
+                singleYearList.push(dataX[i].year);
+                userYearlyRevision.push(dataX[i].count);
+            }
+
+            var t5b = document.getElementById("top5Bar");
+            if(top5Bar){
+                top5Bar.destroy();
+            }
+            top5Bar = new Chart(t5b, {
+                type: 'bar',
+                data: {
+                    labels: singleYearList.map(String),
+                    datasets: [
+                        {
+                            label: deTopUser,
+                            backgroundColor : "rgba(255, 159, 64, 0.2)",
+                            borderColor : "rgba(255, 159, 64, 1)",
+                            data : userYearlyRevision,
+                            borderWidth: 1
+                        },
+
+                    ]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            })
+        })
+
+    }
 
 
 }

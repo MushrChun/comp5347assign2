@@ -6,8 +6,8 @@ var async = require('async');
 var Revision = require('../models/revision');
 var checkTool = require('../tools/tools');
 
-
-fs.readdir('revisions', function(err, items) {
+var dirName = 'a2-test2';
+fs.readdir(dirName, function(err, items) {
 
     var i = 0;
     async.whilst(
@@ -17,7 +17,7 @@ fs.readdir('revisions', function(err, items) {
         function(callback){
             console.log('in loop ' + i + ' :' +items[i]);
 
-            var json = JSON.parse(fs.readFileSync('revisions/'+items[i], 'utf8'));
+            var json = JSON.parse(fs.readFileSync(dirName +'/' +items[i], 'utf8'));
             json.forEach(function(entry){
 
                 if(checkTool.hasAnon(entry)){
