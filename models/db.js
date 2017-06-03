@@ -1,6 +1,6 @@
 var mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost/comp5347', function () {
+mongoose.connect('mongodb://localhost/comp5347test', function () {
     console.log('mongodb connected')
 })
 
